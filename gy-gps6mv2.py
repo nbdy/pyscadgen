@@ -3,6 +3,7 @@ from os.path import join
 from solid.utils import *
 
 SEGMENTS = 42
+NAME = "gy-gps6mv2"
 HAS_PINS = False
 PINS_BACKSIDE = True
 HAS_ANTENNA = True
@@ -10,10 +11,8 @@ ANTENNA_ANGLE = 90
 
 
 def assemble():
-    print "assembling"
     base = cube([35.5, 26.4, 1.1])
 
-    print "punching holes"
     _hole_cylinder = hole()(down(20)(cylinder(d=3, h=50)))
     base += right(2.5)(forward(3)(_hole_cylinder))
     base += right(2.5)(forward(23.5)(_hole_cylinder))
@@ -23,10 +22,8 @@ def assemble():
     _big_hole = hole()(down(20)(cylinder(d=4, h=50)))
     base += right(3)(forward(12.7)(_big_hole))
 
-    print "attaching main chip"
     base += right(9.7)(forward(5.7)(cube([12.1, 16, 2.3])))
 
-    print "attaching antenna connector"
     base += right(2.5)(forward(7.5)(cylinder(d=1.5, h=1.2)))
 
     if HAS_PINS:
@@ -53,4 +50,4 @@ def assemble():
 
 
 if __name__ == '__main__':
-    scad_render_to_file(assemble(), join('./out/', "gy-gps6mv2.scad"), file_header='$fn = %s;' % SEGMENTS)
+    scad_render_to_file(assemble(), join('./out/', NAME + ".scad"), file_header='$fn = %s;' % SEGMENTS)

@@ -14,14 +14,14 @@ class Pin:
     base = cube([_base_width, _base_width, _base_width])
     pin = cylinder(h=_pin_length, d=_pin_width)
 
-    def __init__(self, bent=True, segments=42):
+    def __init__(self, bent=False, segments=42, angle=90):
         self.bent = bent
         self.segments = segments
+        self.angle = angle
 
     def assemble(self):
         if self.bent:
-            for i in range(self.segments):
-                a = i * 90 / self.segments
+            pass
         else:
             self.base += right(self._base_width / 2)(
                 forward(self._base_width / 2)(up(self._base_width / 2 - self._pin_length)(self.pin)))

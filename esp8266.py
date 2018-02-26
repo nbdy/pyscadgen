@@ -2,6 +2,8 @@ from os.path import join
 
 from solid.utils import *
 
+from pin import Pin
+
 SEGMENTS = 42
 NAME = "esp8266"
 
@@ -12,10 +14,6 @@ class ESP8266:
     height = 1.5
 
     _hole_diameter = 3
-
-    _pin_height = 5.9
-    _pin_diameter = 0.6
-    _pin_base = cube([2.5, 2.5, 2.5])
 
     def __init__(self, has_pins=True):
         self.has_pins = has_pins
@@ -42,11 +40,11 @@ class ESP8266:
         base += forward(7.6)(right(33.2)(up(1.5)(_cube_chip)))
 
         if self.has_pins:
+            p = Pin()
             for i in range(0, 14):
-                base += right(10 + i * 2.5)(down(2.5)(self._pin_base))
-            pin_base = cube([37.7, 2.5, 8.5])
-            base += down(8.5)(right(10)(pin_base))
-            base += down(8.5)(right(10)(forward(28.6)(pin_base)))
+                base += right(10 + i * p._base_width)(down(p._base_width)(p.assemble()))
+                base += right(10 + i * p._base_width)(
+                    down(p._base_width)(forward(self.width - p._base_width)(p.assemble())))
 
         return base
 

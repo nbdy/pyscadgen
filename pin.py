@@ -6,6 +6,7 @@ SEGMENTS = 42
 NAME = "pin"
 
 
+# todo angle
 class Pin:
     _base_width = 2.5
     _pin_length = 6
@@ -14,10 +15,11 @@ class Pin:
     base = cube([_base_width, _base_width, _base_width])
     pin = cylinder(h=_pin_length, d=_pin_width)
 
-    def __init__(self, bent=False, segments=42, angle=90):
+    def __init__(self, bent=False, segments=42, angle=90, pin_length=6):
         self.bent = bent
         self.segments = segments
         self.angle = angle
+        self._pin_length = pin_length
 
     def assemble(self):
         if self.bent:

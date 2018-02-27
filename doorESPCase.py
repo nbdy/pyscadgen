@@ -8,6 +8,8 @@ SEGMENTS = 42
 NAME = "doorESPCase"
 
 
+# todo extrude usb port / outside module cases
+
 class DoorESPCase:
     length = ESP8266.length
     width = ESP8266.width
@@ -22,7 +24,8 @@ class DoorESPCase:
 
     def assemble(self):
         case = cube([self.length, self.width, self.height])
-        case += up(self.height / 2 - self.esp.height / 2)(forward(self.extra / 2)(hole()(ESP8266().assemble())))
+        case += right(self.extra / 2)(
+            up(self.height / 2 - self.esp.height / 2)(forward(self.extra / 2)(hole()(ESP8266().assemble()))))
         return case
 
     def upper_half(self):

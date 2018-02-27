@@ -8,12 +8,20 @@ SEGMENTS = 42
 NAME = "esp8266"
 
 
+# todo offsets as variables
+
 class ESP8266:
     length = 57.5
     width = 31
     height = 1.5
 
-    _hole_diameter = 3
+    hole_diameter = 3
+
+    usb_port = {
+        "length": 5.7,
+        "width": 7.4,
+        "height": 2.4
+    }
 
     def __init__(self, has_pins=True):
         self.has_pins = has_pins
@@ -21,14 +29,14 @@ class ESP8266:
     def assemble(self):
         base = cube([self.length, self.width, self.height])
 
-        _hole_cylinder = hole()(down(20)(cylinder(d=self._hole_diameter, h=100)))
+        _hole_cylinder = hole()(down(20)(cylinder(d=self.hole_diameter, h=100)))
         base += right(2)(forward(2)(_hole_cylinder))
         base += right(2)(forward(29)(_hole_cylinder))
         base += right(54.8)(forward(2)(_hole_cylinder))
         base += right(54.8)(forward(29)(_hole_cylinder))
 
-        _cube_port = cube([5.7, 7.4, 2.4])
-        base += forward(self.width / 2 - 5.7 / 2)(left(1.5)(_cube_port))
+        _cube_port = cube([self.usb_port["length"], self.usb_port["width"], self.usb_port["height"]])
+        base += forward(self.width / 2 - self.usb_port["length"] / 2)(left(1.5)(_cube_port))
 
         _cube_btn = up(1.5)(cube([4, 3, self.height]))
         _cube_btn += up(2.5)(right(2)(forward(1.5)(cylinder(d=1.5, h=1))))

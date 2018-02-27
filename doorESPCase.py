@@ -9,21 +9,20 @@ NAME = "doorESPCase"
 
 
 class DoorESPCase:
-    length = ESP8266.length + 8
-    width = ESP8266.width + 8
-    height = ESP8266.height + 8
+    length = ESP8266.length
+    width = ESP8266.width
+    height = ESP8266.height
 
-    def __init__(self):
+    def __init__(self, extra=8):
         self.esp = ESP8266()
+        self.length += extra
+        self.width += extra
+        self.height += extra
+        self.extra = extra
 
     def assemble(self):
         case = cube([self.length, self.width, self.height])
-        case += hole()
-        return case
-
-    def lower_half(self):
-        case = self.assemble()
-        case += hole()(up(self.height / 2)(cube([self.length, self.width, self.height / 2])))
+        case += up(self.height / 2 - self.esp.height / 2)(forward(self.extra / 2)(hole()(ESP8266().assemble())))
         return case
 
     def upper_half(self):
@@ -31,6 +30,11 @@ class DoorESPCase:
         case += hole()(cube([self.length, self.width, self.height / 2]))
         return case
 
+    def lower_half(self):
+        case = self.assemble()
+        case += up(self.height / 2)(hole()(cube([self.length, self.width, self.height / 2])))
+        return case
+
 
 if __name__ == '__main__':
-    scad_render_to_file(DoorESPCase().assemble(), join('./out/', NAME + ".scad"), file_header='$fn = %s;' % SEGMENTS)
+    scad_render_to_file(DoorESPCase().lower_half(), join('./out/', NAME + ".scad"), file_header='$fn = %s;' % SEGMENTS)

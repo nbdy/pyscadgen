@@ -8,7 +8,7 @@ SEGMENTS = 42
 NAME = "doorESPCase"
 
 
-# todo extrude usb port / outside module cases
+# todo  outside module cases
 
 class DoorESPCase:
     length = ESP8266.length
@@ -41,4 +41,4 @@ class DoorESPCase:
 
 
 if __name__ == '__main__':
-    scad_render_to_file(DoorESPCase().upper_half(), join('./out/', NAME + ".scad"), file_header='$fn = %s;' % SEGMENTS)
+    scad_render_to_file(DoorESPCase().assemble(), join('./out/', NAME + ".scad"), file_header='$fn = %s;' % SEGMENTS)

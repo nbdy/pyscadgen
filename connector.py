@@ -6,7 +6,7 @@ SEGMENTS = 42
 NAME = "connector"
 
 
-class SlideConnector:
+class ClickConnector:
     x_connector_angle = 45
 
     def __init__(self, length=20, height=3, width=10, thickness=3, ):
@@ -17,9 +17,8 @@ class SlideConnector:
         self.base = cube([length, width, height])
         self.connector = cube([length, width, height / 2]) + up(height / 2)(cube([length / 8, width, height / 2]))
 
-    def generate_pin(self):
-        b = forward(self.width)(right(self.length - self.thickness / 2)(up(self.thickness / 2)(
-            sphere(d=self.thickness))))
+    def generate_lock(self):
+        b = up(self.height * 0.5)(forward(self.width)(right(self.length - self.thickness / 2)(sphere(d=self.height))))
         return b
 
     def generate_hook_pin_holder(self):
@@ -32,10 +31,10 @@ class SlideConnector:
     def hook(self):
         b = cube([self.length, self.thickness, self.height])
         b += up(self.height)(cube([self.length, self.width + self.thickness, self.height / 2]))
-        b += hole()(forward(self.thickness)(up(self.height)(cube([self.length, self.width, 0.5]))))
+        b += hole()(forward(self.thickness)(up(self.height)(cube([self.length, self.width, 0.5]))))  # split top / hook
         b += cube([self.thickness, self.width, self.height])
         b += forward(self.width)(cube([self.length, self.thickness, self.height]))
-        b += self.generate_pin()
+        b += self.generate_lock()
         b += self.generate_hook_pin_holder()
         return b
 
@@ -46,5 +45,5 @@ class SlideConnector:
 
 
 if __name__ == '__main__':
-    scad_render_to_file(SlideConnector().hook(), join('./out/', NAME + ".scad"),
+    scad_render_to_file(ClickConnector().hook(), join('./out/', NAME + ".scad"),
                         file_header='$fn = %s;' % SEGMENTS)

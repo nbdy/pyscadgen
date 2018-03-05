@@ -17,7 +17,7 @@ class DoorESPCase:
 
     def __init__(self, extra=6):
         self.esp = ESP8266()
-
+        self.esp.btn_cylinder["height"] += extra
         self.length += extra
         self.width += extra
         self.height += extra

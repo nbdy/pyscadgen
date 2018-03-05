@@ -8,8 +8,6 @@ SEGMENTS = 42
 NAME = "esp8266"
 
 
-# todo offsets as variables
-
 class ESP8266:
     length = 57.5
     width = 31
@@ -20,7 +18,8 @@ class ESP8266:
     usb_port = {
         "length": 5.7,
         "width": 7.4,
-        "height": 2.4
+        "height": 2.4,
+        "left": 1.5
     }
 
     btn = {
@@ -60,7 +59,7 @@ class ESP8266:
         base += right(54.8)(forward(29)(_hole_cylinder))
 
         _cube_port = cube([self.usb_port["length"], self.usb_port["width"], self.usb_port["height"]])
-        base += forward(self.width / 2 - self.usb_port["length"] / 2)(left(1.5)(_cube_port))
+        base += forward(self.width / 2 - self.usb_port["width"] / 2)(left(self.usb_port["left"])(_cube_port))
 
         btn = right(self.btn["right"])(
             up(self.btn["up"])(cube([self.btn["length"], self.btn["width"], self.height])))
@@ -76,9 +75,9 @@ class ESP8266:
         if self.has_pins:
             p = Pin()
             for i in range(0, 14):
-                base += right(10 + i * p._base_width)(down(p._base_width)(p.assemble()))
-                base += right(10 + i * p._base_width)(
-                    down(p._base_width)(forward(self.width - p._base_width)(p.assemble())))
+                base += right(10 + i * p.base_width)(down(p.base_width)(p.assemble()))
+                base += right(10 + i * p.base_width)(
+                    down(p.base_width)(forward(self.width - p.base_width)(p.assemble())))
 
         return base
 

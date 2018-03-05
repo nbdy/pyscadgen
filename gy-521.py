@@ -37,8 +37,7 @@ class GY521:
         b += right(self.length - self.onboard_cube["length"])(forward(4.35)(up(self.height)(
             cube([self.onboard_cube["length"], self.onboard_cube["width"], self.onboard_cube["height"]]))))
         b += forward(self.bigger_chip["forward"])(right(self.bigger_chip["right"])(
-            cube([self.bigger_chip["length"], self.bigger_chip["width"], self.bigger_chip["height"]])
-        ))
+            cube([self.bigger_chip["length"], self.bigger_chip["width"], self.bigger_chip["height"]])))
 
         h = hole()(forward(1 + self.hole_diameter / 2)(cylinder(d=self.hole_diameter, h=self.height)))
         b += right(1.25 + self.hole_diameter / 2)(h)

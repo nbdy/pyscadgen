@@ -18,10 +18,15 @@ class DoorESPCase:
     def __init__(self, extra=6):
         self.esp = ESP8266()
         self.esp.btn_cylinder["height"] += extra
+        self.esp.usb_port["length"] += extra
+        self.esp.usb_port["left"] += extra
         self.length += extra
         self.width += extra
         self.height += extra
         self.extra = extra
+
+    def generate_cable_slit(self):
+        pass
 
     def assemble(self):
         case = cube([self.length, self.width, self.height])

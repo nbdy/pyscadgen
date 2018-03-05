@@ -23,6 +23,30 @@ class ESP8266:
         "height": 2.4
     }
 
+    btn = {
+        "length": 4,
+        "width": 3,
+        "height": height,
+        "up": 1.5,
+        "right": 2
+    }
+
+    btn_cylinder = {
+        "diameter": 1.5,
+        "height": 1,
+        "up": 2.5,
+        "right": 4,
+        "forward": 1.5
+    }
+
+    rst_btn = {
+        "forward": 6
+    }
+
+    flash_btn = {
+        "forward": 22
+    }
+
     def __init__(self, has_pins=True):
         self.has_pins = has_pins
 
@@ -38,10 +62,12 @@ class ESP8266:
         _cube_port = cube([self.usb_port["length"], self.usb_port["width"], self.usb_port["height"]])
         base += forward(self.width / 2 - self.usb_port["length"] / 2)(left(1.5)(_cube_port))
 
-        _cube_btn = up(1.5)(cube([4, 3, self.height]))
-        _cube_btn += up(2.5)(right(2)(forward(1.5)(cylinder(d=1.5, h=1))))
-        base += forward(6)(right(2)(_cube_btn))
-        base += forward(22)(right(2)(_cube_btn))
+        btn = right(self.btn["right"])(
+            up(self.btn["up"])(cube([self.btn["length"], self.btn["width"], self.height])))
+        btn += forward(self.btn_cylinder["forward"])(right(self.btn_cylinder["right"])(up(self.btn_cylinder["up"])(
+            cylinder(d=self.btn_cylinder["diameter"], h=self.btn_cylinder["height"]))))
+        base += forward(self.rst_btn["forward"])(btn)
+        base += forward(self.flash_btn["forward"])(btn)
 
         _cube_chip = cube([24.2, 16, 1])
         _cube_chip += forward(2)(right(1)(cube([15, 12, 1.2])))

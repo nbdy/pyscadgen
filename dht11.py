@@ -18,9 +18,10 @@ class DHT11:
 
     def assemble(self):
         base = cube([self.length, self.width, self.height])
-        p = Pin(pin_length=7.5)
-        for i in range(1, 5):
-            base += forward(2.8 * i - 2.05 / 2)(rotate([0, 270, 0])(right(2.8)(cylinder(d=0.5, h=7.5))))
+        p = Pin(True, pin_length=7.5)
+        for i in range(0, 4):
+            base += forward(i * p._base_width)(forward(1)(
+                up(self.height / 2 + p._base_width / 2)(rotate([0, 90, 0])(p.assemble()))))
         return base
 
 

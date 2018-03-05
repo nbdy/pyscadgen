@@ -23,7 +23,10 @@ class Pin:
 
     def assemble(self):
         if self.bent:
-            pass
+            self.base += right(self._base_width / 2)(
+                forward(self._base_width / 2)(up(self._base_width / 2 - self._pin_length)(
+                    rotate_extrude(10)(circle(d=self._base_width))))
+            )
         else:
             self.base += right(self._base_width / 2)(
                 forward(self._base_width / 2)(up(self._base_width / 2 - self._pin_length)(self.pin)))
@@ -31,4 +34,4 @@ class Pin:
 
 
 if __name__ == '__main__':
-    scad_render_to_file(Pin().assemble(), join('./out/', NAME + ".scad"), file_header='$fn = %s;' % SEGMENTS)
+    scad_render_to_file(Pin(True).assemble(), join('./out/', NAME + ".scad"), file_header='$fn = %s;' % SEGMENTS)

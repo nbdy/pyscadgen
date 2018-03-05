@@ -15,8 +15,9 @@ class DoorESPCase:
     width = ESP8266.width
     height = ESP8266.height
 
-    def __init__(self, extra=4):
+    def __init__(self, extra=6):
         self.esp = ESP8266()
+
         self.length += extra
         self.width += extra
         self.height += extra
@@ -41,4 +42,4 @@ class DoorESPCase:
 
 
 if __name__ == '__main__':
-    scad_render_to_file(DoorESPCase().assemble(), join('./out/', NAME + ".scad"), file_header='$fn = %s;' % SEGMENTS)
+    scad_render_to_file(DoorESPCase().upper_half(), join('./out/', NAME + ".scad"), file_header='$fn = %s;' % SEGMENTS)

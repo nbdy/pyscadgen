@@ -26,13 +26,14 @@ class DoorESPCase:
         self.extra = extra
 
     def generate_cable_slit(self):
-        pass
+        return hole()(forward(self.width / 2 - 3)(right(self.length - self.extra / 2)(cube([1, 6, self.height]))))
 
     def assemble(self):
         case = cube([self.length, self.width, self.height])
         case += right(self.extra / 2)(
             up(self.height / 2 - self.esp.height / 2)(forward(self.extra / 2)(hole()(ESP8266().assemble()))))
         case += hole()(cube([self.extra / 4, self.width, self.height]))
+        case += self.generate_cable_slit()
         return case
 
     def upper_half(self):
@@ -47,4 +48,4 @@ class DoorESPCase:
 
 
 if __name__ == '__main__':
-    scad_render_to_file(DoorESPCase().upper_half(), join('./out/', NAME + ".scad"), file_header='$fn = %s;' % SEGMENTS)
+    scad_render_to_file(DoorESPCase().lower_half(), join('./out/', NAME + ".scad"), file_header='$fn = %s;' % SEGMENTS)

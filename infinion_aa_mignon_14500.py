@@ -21,6 +21,15 @@ class InfinionAAMignon14500:
         return base
 
 
+class Case:
+    def __init__(self):
+        self.b = InfinionAAMignon14500().assemble()
+
+    def assemble(self):
+
+
+
+
 if __name__ == '__main__':
     scad_render_to_file(InfinionAAMignon14500().assemble(), join('./out/', NAME + ".scad"),
                         file_header='$fn = %s;' % SEGMENTS)

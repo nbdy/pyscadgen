@@ -135,11 +135,11 @@ class ESP8266:
         )
 
         if self.has_pins:
-            p = Pin(pin_diameter=1)
+            p = Pin(pin_diameter=1, pcb_height=self.height)
             for i in range(0, 15):
-                base += right(10 + i * p.base_width)(down(p.base_width)(p.assemble()))
-                base += right(10 + i * p.base_width)(
-                    down(p.base_width)(forward(self.width - p.base_width)(p.assemble())))
+                base += forward(0.125)(right(10 + i * p.base_width)(down(p.base_width)(p.assemble())))
+                base += back(0.125)(right(10 + i * p.base_width)(
+                    down(p.base_width)(forward(self.width - p.base_width)(p.assemble()))))
 
         return base
 

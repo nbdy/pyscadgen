@@ -4,13 +4,13 @@ from solid.utils import *
 
 from esp8266 import ESP8266
 
-SEGMENTS = 42
-NAME = "doorESPCase"
+FILE_HEADER = '$fn = %s;' % 42
+NAME = "ES8266PCase"
 
 
 # todo  outside module cases
 
-class DoorESPCase:
+class ES8266PCase:
     length = ESP8266.length
     width = ESP8266.width
     height = ESP8266.height
@@ -48,4 +48,5 @@ class DoorESPCase:
 
 
 if __name__ == '__main__':
-    scad_render_to_file(DoorESPCase().lower_half(), join('./out/', NAME + ".scad"), file_header='$fn = %s;' % SEGMENTS)
+    scad_render_to_file(ES8266PCase().lower_half(), join('./out/', NAME + "_lower.scad"), file_header=FILE_HEADER)
+    scad_render_to_file(ES8266PCase().upper_half(), join('./out/', NAME + "_upper.scad"), file_header=FILE_HEADER)

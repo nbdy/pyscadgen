@@ -1,5 +1,4 @@
 from os.path import join
-
 from solid.utils import *
 
 from pin import Pin
@@ -44,34 +43,35 @@ class FC22:
     def assemble(self):
         base = cube([self.length, self.width, self.height])
         h = hole()(cylinder(h=self.height, d=self.hole_diameter))
-        base += forward(self.hole_offset)(right(self.hole_offset)(h))
-        base += forward(self.width - self.hole_offset)(right(self.hole_offset)(h))
-        base += forward(self.hole_offset)(right(self.length - self.hole_offset)(h))
-        base += forward(self.width - self.hole_offset)(right(self.length - self.hole_offset)(h))
-        base += up(self.height)(forward(self.regulator_offset_forward)(right(self.regulator_offset_right)(
+        o = [forward(self.hole_offset)(right(self.hole_offset)(h)),
+             forward(self.width - self.hole_offset)(right(self.hole_offset)(h)),
+             forward(self.hole_offset)(right(self.length - self.hole_offset)(h)),
+             forward(self.width - self.hole_offset)(right(self.length - self.hole_offset)(h))]
+
+        o.append(up(self.height)(forward(self.regulator_offset_forward)(right(self.regulator_offset_right)(
             cube([self.regulator_length, self.regulator_width, self.regulator_height])
-        )))
-        base += up(self.height)(forward(self.dual_diff_comp_offset_forward)(right(self.dual_diff_comp_offset_right)(
+        ))))
+        o.append(up(self.height)(forward(self.dual_diff_comp_offset_forward)(right(self.dual_diff_comp_offset_right)(
             cube([self.dual_diff_comp_length, self.dual_diff_comp_width, self.dual_diff_comp_height])
-        )))
+        ))))
         p = up(self.height)(cylinder(h=self.pin_length, d=self.pin_diameter))
-        base += forward(7.5)(right(17.3)(p))
-        base += forward(6)(right(20.7)(p))
-        base += forward(7.5)(right(24)(p))
-        base += forward(14)(right(17.3)(p))
-        base += forward(15.25)(right(20.7)(p))
-        base += forward(14)(right(24)(p))
-        base += up(self.height)(forward(self.sensor_base_diameter / 2)(rotate([180, 0, 0])(
+        o.append(forward(7.5)(right(17.3)(p)))
+        o.append(forward(6)(right(20.7)(p)))
+        o.append(forward(7.5)(right(24)(p)))
+        o.append(forward(14)(right(17.3)(p)))
+        o.append(forward(15.25)(right(20.7)(p)))
+        o.append(forward(14)(right(24)(p)))
+        o.append(up(self.height)(forward(self.sensor_base_diameter / 2)(rotate([180, 0, 0])(
             right(29.6 - self.sensor_base_diameter / 2)(cylinder(d=self.sensor_base_diameter,
-                                                                 h=self.sensor_base_height)))))
-        base += up(self.height - self.sensor_base_height)(forward(self.sensor_base_diameter / 2)(rotate([180, 0, 0])(
+                                                                 h=self.sensor_base_height))))))
+        o.append(up(self.height - self.sensor_base_height)(forward(self.sensor_base_diameter / 2)(rotate([180, 0, 0])(
             right(29.6 - self.sensor_base_diameter / 2)(cylinder(d=self.sensor_top_base_diameter,
-                                                                 h=self.sensor_height - self.sensor_base_height)))))
+                                                                 h=self.sensor_height - self.sensor_base_height))))))
         if self.has_pins:
-            p = up(Pin._base_width * 3 - self.height)(rotate([180, 0, 0])(Pin().assemble()))
+            p = up(Pin.base_width * 3 - self.height)(rotate([180, 0, 0])(Pin().assemble()))
             for i in range(1, 5):
-                base += down(2.5)(forward(5 + i * Pin._base_width)(right(2.5)(p)))
-        return base
+                o.append(down(2.5)(forward(5 + i * Pin.base_width)(right(2.5)(p))))
+        return base + o
 
 
 if __name__ == '__main__':

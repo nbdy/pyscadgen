@@ -1,5 +1,4 @@
 from os.path import join
-
 from solid.utils import *
 
 from pin import Pin
@@ -10,7 +9,7 @@ NAME = "esp8266"
 
 class ESP8266:
     length = 57.5
-    width = 30.85
+    width = 31
     height = 1.6
 
     hole_diameter = 3.4
@@ -96,23 +95,29 @@ class ESP8266:
         base = cube([self.length, self.width, self.height])
 
         _hole_cylinder = hole()(cylinder(d=self.hole_diameter, h=100, center=True))
+        _holes = []
         for o in self.hole_offsets:
-            base += right(o["right"])(forward(o["forward"])(_hole_cylinder))
+            _holes.append(right(o["right"])(forward(o["forward"])(_hole_cylinder)))
 
+        base += _holes
+
+        _o = []
         _cube_port = cube([self.usb_port["length"], self.usb_port["width"], self.usb_port["height"]])
-        _cube_port += back(self.usb_port_noose["back"])(
+        _o.append(back(self.usb_port_noose["back"])(
             down(self.usb_port_noose["down"])(cube([self.usb_port_noose["length"],
                                                     self.usb_port_noose["width"],
-                                                    self.usb_port_noose["height"]])))
-        base += forward(self.width / 2 - self.usb_port["width"] / 2)(left(self.usb_port["left"])(up(self.height - 0.4)(
-            _cube_port)))
+                                                    self.usb_port_noose["height"]]))))
+
+        _o.append(
+            forward(self.width / 2 - self.usb_port["width"] / 2)(left(self.usb_port["left"])(up(self.height - 0.4)(
+                _cube_port))))
 
         btn = right(self.btn["right"])(
             up(self.btn["up"])(cube([self.btn["length"], self.btn["width"], self.height])))
         btn += forward(self.btn_cylinder["forward"])(right(self.btn_cylinder["right"])(up(self.btn_cylinder["up"])(
             cylinder(d=self.btn_cylinder["diameter"], h=self.btn_cylinder["height"]))))
-        base += forward(self.rst_btn["forward"])(btn)
-        base += forward(self.flash_btn["forward"])(btn)
+        _o.append(forward(self.rst_btn["forward"])(btn))
+        _o.append(forward(self.flash_btn["forward"])(btn))
 
         _esp8266_chip = up(self.height)(cube([self.esp8266_base_chip["length"],
                                               self.esp8266_base_chip["width"],
@@ -123,8 +128,8 @@ class ESP8266:
                                                     self.esp8266_chip["height"]]))
         ))
 
-        base += forward(self.esp8266_base_chip["forward"])(right(self.esp8266_base_chip["right"])(_esp8266_chip))
-        base += forward(self.electronics_plane["forward"])(
+        _o.append(forward(self.esp8266_base_chip["forward"])(right(self.esp8266_base_chip["right"])(_esp8266_chip)))
+        _o.append(forward(self.electronics_plane["forward"])(
             up(self.electronics_plane["up"])(
                 right(self.electronics_plane["right"])(
                     cube([self.electronics_plane["length"],
@@ -132,14 +137,16 @@ class ESP8266:
                           self.electronics_plane["height"]])
                 )
             )
-        )
+        ))
 
         if self.has_pins:
             p = Pin(pin_diameter=1, pcb_height=self.height)
             for i in range(0, 15):
-                base += forward(0.125)(right(10 + i * p.base_width)(down(p.base_width)(p.assemble())))
-                base += back(0.125)(right(10 + i * p.base_width)(
-                    down(p.base_width)(forward(self.width - p.base_width)(p.assemble()))))
+                _o.append(forward(0.25)(right(10 + i * p.base_width)(down(p.base_width)(p.assemble()))))
+                _o.append(back(0.25)(right(10 + i * p.base_width)(
+                    down(p.base_width)(forward(self.width - p.base_width)(p.assemble())))))
+
+        base += _o
 
         return base
 

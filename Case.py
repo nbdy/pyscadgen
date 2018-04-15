@@ -4,8 +4,13 @@ from solid.utils import *
 class Case:
     positive = None
 
-    def __init__(self, wall_thickness=4):
+    # connectors: [right()(Connector(x, y, z), forward()(Connector(x, y, z)))
+    def __init__(self, wall_thickness=4, connectors=[]):
         self.wall_thickness = wall_thickness
+        self.connectors = connectors
+
+    def finish(self, base):
+        return base
 
     def assemble(self):
         b = back(self.wall_thickness / 2)(
@@ -13,7 +18,7 @@ class Case:
                 cube([self.positive.length + self.wall_thickness,
                       self.positive.width + self.wall_thickness,
                       self.positive.height + self.wall_thickness]))))
-        return b + hole()(self.positive().assemble())
+        return self.finish(b) + hole()(self.positive().assemble())
 
     def bottom(self):
         return self.assemble() + hole()(

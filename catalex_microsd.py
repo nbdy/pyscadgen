@@ -1,8 +1,8 @@
 from os.path import join
-
 from solid.utils import *
 
-SEGMENTS = 42
+from Case import Case
+
 NAME = "catalex_microsd"
 HAS_PINS = True
 PINS_BACKSIDE = False
@@ -46,5 +46,12 @@ class CatalexMicroSD:
         return base
 
 
+# todo slot/space for microsd in/out
+class CatalexMicroSDCase(Case):
+    positive = CatalexMicroSD
+
+
 if __name__ == '__main__':
-    scad_render_to_file(CatalexMicroSD().assemble(), join('./out/', NAME + ".scad"), file_header='$fn = %s;' % SEGMENTS)
+    scad_render_to_file(CatalexMicroSD().assemble(), join('./out/', NAME + ".scad"), file_header='$fn = 42;')
+    scad_render_to_file(CatalexMicroSDCase().top(), join('./out/', NAME + "_top.scad"), file_header='$fn = 42;')
+    scad_render_to_file(CatalexMicroSDCase().bottom(), join('./out/', NAME + "_bottom.scad"), file_header='$fn = 42;')

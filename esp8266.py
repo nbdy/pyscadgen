@@ -1,6 +1,7 @@
 from os.path import join
 from solid.utils import *
 
+from Case import Case
 from pin import Pin
 
 SEGMENTS = 42
@@ -19,7 +20,8 @@ class ESP8266:
         "width": 7.5,
         "height": 2.7,
         "left": 5.7 - 4.65,
-        "up": height
+        "up": height,
+        "forward": width / 2 - 7.5 / 2
     }
 
     usb_port_noose = {
@@ -102,7 +104,7 @@ class ESP8266:
         base += _holes
 
         _o = []
-        _cube_port = cube([self.usb_port["length"], self.usb_port["width"], self.usb_port["height"]])
+        _cube_port = cube([self.usb_port["length"], self.usb_port_noose["width"], self.usb_port["height"]])
         _o.append(back(self.usb_port_noose["back"])(
             down(self.usb_port_noose["down"])(cube([self.usb_port_noose["length"],
                                                     self.usb_port_noose["width"],
@@ -151,5 +153,22 @@ class ESP8266:
         return base
 
 
+class ESP8266Case(Case):
+    positive = ESP8266
+
+    def finish(self, base):
+        base += left(self.wall_thickness)(up(ESP8266.usb_port["up"])(forward(ESP8266.usb_port["forward"])(hole()(
+            cube([self.wall_thickness + ESP8266.usb_port["length"],
+                  ESP8266.usb_port_noose["width"],
+                  ESP8266.usb_port["height"]])))))
+
+        base += down(1.25)(right(10)(forward(2.5)(hole()(cube([ESP8266.length - 10, ESP8266.width - 5, 1.25])))))
+        base += down(self.wall_thickness)(forward(ESP8266.width / 2 - 5)(
+            right(ESP8266.length)(hole()(cube([1, 10, self.wall_thickness * 2 + ESP8266.height])))))
+        return base
+
+
 if __name__ == '__main__':
-    scad_render_to_file(ESP8266().assemble(), join('./out/', NAME + ".scad"), file_header='$fn = %s;' % SEGMENTS)
+    scad_render_to_file(ESP8266().assemble(), join('./out/', NAME + ".scad"), file_header='$fn = 42;')
+    scad_render_to_file(ESP8266Case().bottom(), join('./out/', NAME + "_bottom.scad"), file_header='$fn = 42;')
+    scad_render_to_file(ESP8266Case().top(), join('./out/', NAME + "_top.scad"), file_header='$fn = 42;')

@@ -1,6 +1,7 @@
 from os.path import join
 from solid.utils import *
 
+from Case import Case
 from pin import Pin
 
 SEGMENTS = 42
@@ -68,11 +69,18 @@ class FC22:
             right(29.6 - self.sensor_base_diameter / 2)(cylinder(d=self.sensor_top_base_diameter,
                                                                  h=self.sensor_height - self.sensor_base_height))))))
         if self.has_pins:
-            p = up(Pin.base_width * 3 - self.height)(rotate([180, 0, 0])(Pin().assemble()))
+            p = up(Pin.base_width * 3 - self.height)(rotate([180, 0, 0])(Pin(pcb_height=self.height).assemble()))
             for i in range(1, 5):
                 o.append(down(2.5)(forward(5 + i * Pin.base_width)(right(2.5)(p))))
         return base + o
 
 
+class FC22Case(Case):
+    positive = FC22
+
+
 if __name__ == '__main__':
-    scad_render_to_file(FC22().assemble(), join('./out/', NAME + ".scad"), file_header='$fn = %s;' % SEGMENTS)
+    scad_render_to_file(FC22().assemble(), join('./out/', NAME + ".scad"), file_header='$fn = 42;')
+    scad_render_to_file(FC22Case().assemble(), join('./out/', NAME + "_case.scad"), file_header='$fn = 42;')
+    scad_render_to_file(FC22Case().bottom(), join('./out/', NAME + "_case_bottom.scad"), file_header='$fn = 42;')
+    scad_render_to_file(FC22Case().top(), join('./out/', NAME + "_case_top.scad"), file_header='$fn = 42;')

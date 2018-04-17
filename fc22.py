@@ -2,7 +2,7 @@ from os.path import join
 from solid.utils import *
 
 from Case import Case
-from pin import Pin
+from Pin import Pin
 
 SEGMENTS = 42
 NAME = "fc22"

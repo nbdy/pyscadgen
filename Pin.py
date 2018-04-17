@@ -9,10 +9,10 @@ NAME = "pin"
 # todo angle
 # todo solder top
 class Pin:
-    base_width = 2.5
+    base_width = 2.54
     base = cube([base_width, base_width, base_width])
 
-    def __init__(self, bent=False, solder_hat=True, segments=42, angle=90, pin_length=6, pin_diameter=0.6,
+    def __init__(self, bent=False, solder_hat=True, segments=42, angle=90, pin_length=6, pin_diameter=1,
                  pcb_height=1.6):
         self.pcb_height = pcb_height
         self.bent = bent

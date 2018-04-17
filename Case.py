@@ -1,7 +1,10 @@
 from solid.utils import *
 
+from Connector import ClipConnector
+
 
 class Case:
+    name = "case"
     positive = None
 
     # connectors: [right()(Connector(x, y, z), forward()(Connector(x, y, z)))
@@ -34,3 +37,9 @@ class Case:
                     cube([self.positive.length + self.wall_thickness,
                           self.positive.width + self.wall_thickness,
                           self.positive.height + self.wall_thickness / 2])))))
+
+    def clip(self):
+        return ClipConnector(self.positive.length * 0.2,
+                             self.positive.width * 0.2,
+                             self.positive.height,
+                             self.positive.height * 0.2)

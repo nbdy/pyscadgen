@@ -1,8 +1,7 @@
 from os.path import join
-
 from solid.utils import *
 
-from pin import Pin
+from Pin import Pin
 
 SEGMENTS = 42
 NAME = "max4466"

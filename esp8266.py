@@ -2,13 +2,14 @@ from os.path import join
 from solid.utils import *
 
 from Case import Case
-from pin import Pin
+from Connector import ClipConnector
+from Pin import Pin
 
 SEGMENTS = 42
-NAME = "esp8266"
 
 
 class ESP8266:
+    name = "esp8266"
     length = 57.5
     width = 31
     height = 1.6
@@ -16,17 +17,16 @@ class ESP8266:
     hole_diameter = 3.4
 
     usb_port = {
-        "length": 5.7 + 5,
-        "width": 7.5,
+        "length": 5.7,
+        "width": 7.9,
         "height": 2.7,
         "left": 5.7 - 4.65,
         "up": height,
-        "forward": width / 2 - 7.5 / 2
+        "forward": 11.8
     }
 
     usb_port_noose = {
-        "length": usb_port["length"] - 5.05,
-        "width": 7.95,
+        "width": 7.85,
         "height": 2.95,
         "down": (2.95 - usb_port["height"]) / 2,
         "back": (7.95 - usb_port["width"]) / 2
@@ -66,8 +66,8 @@ class ESP8266:
     }
 
     esp8266_chip = {
-        "length": 15.10,
-        "width": 12.05,
+        "length": 15.15,
+        "width": 12.10,
         "height": 4.65 - (height + esp8266_base_chip["height"]),
         "forward": (esp8266_base_chip["width"] - 12.05) / 2,
         "up": height + esp8266_base_chip["height"],
@@ -84,10 +84,10 @@ class ESP8266:
     }
 
     hole_offsets = [
-        {"right": 1.3 + hole_diameter / 2, "forward": 2},
-        {"right": 1.3 + hole_diameter / 2, "forward": 29},
-        {"right": length - (0.95 + hole_diameter / 2), "forward": 2},
-        {"right": length - (0.95 + hole_diameter / 2), "forward": 29}
+        {"right": 1.25 + hole_diameter / 2, "forward": 1.3 + hole_diameter / 2},
+        {"right": 1.25 + hole_diameter / 2, "forward": 26.4 + hole_diameter / 2},
+        {"right": 53.2 + hole_diameter / 2, "forward": 1.3 + hole_diameter / 2},
+        {"right": 53.2 + hole_diameter / 2, "forward": 26.4 + hole_diameter / 2}
     ]
 
     def __init__(self, has_pins=True):
@@ -104,14 +104,9 @@ class ESP8266:
         base += _holes
 
         _o = []
-        _cube_port = cube([self.usb_port["length"], self.usb_port_noose["width"], self.usb_port["height"]])
-        _o.append(back(self.usb_port_noose["back"])(
-            down(self.usb_port_noose["down"])(cube([self.usb_port_noose["length"],
-                                                    self.usb_port_noose["width"],
-                                                    self.usb_port_noose["height"]]))))
-
+        _cube_port = cube([self.usb_port["length"], self.usb_port_noose["width"], self.usb_port_noose["height"]])
         _o.append(
-            forward(self.width / 2 - self.usb_port["width"] / 2)(left(self.usb_port["left"])(up(self.height - 0.4)(
+            forward(self.usb_port["forward"])(left(self.usb_port["left"])(up(self.height - 0.4)(
                 _cube_port))))
 
         btn = right(self.btn["right"])(
@@ -141,8 +136,10 @@ class ESP8266:
             )
         ))
 
+        _o.append(up(self.height)(forward(25.5)(right(4.35)(cube([4.5, 3.3, 2.65 - self.height])))))
+
         if self.has_pins:
-            p = Pin(pin_diameter=1, pcb_height=self.height)
+            p = Pin(pcb_height=self.height)
             for i in range(0, 15):
                 _o.append(forward(0.25)(right(10 + i * p.base_width)(down(p.base_width)(p.assemble()))))
                 _o.append(back(0.25)(right(10 + i * p.base_width)(
@@ -154,21 +151,32 @@ class ESP8266:
 
 
 class ESP8266Case(Case):
+    name = "esp8266case"
     positive = ESP8266
 
     def finish(self, base):
-        base += left(self.wall_thickness)(up(ESP8266.usb_port["up"])(forward(ESP8266.usb_port["forward"])(hole()(
-            cube([self.wall_thickness + ESP8266.usb_port["length"],
-                  ESP8266.usb_port_noose["width"],
-                  ESP8266.usb_port["height"]])))))
-
-        base += down(1.25)(right(10)(forward(2.5)(hole()(cube([ESP8266.length - 10, ESP8266.width - 5, 1.25])))))
-        base += down(self.wall_thickness)(forward(ESP8266.width / 2 - 5)(
-            right(ESP8266.length)(hole()(cube([1, 10, self.wall_thickness * 2 + ESP8266.height])))))
-        return base
+        c = ClipConnector(self.positive.length * 0.2,
+                          self.positive.width * 0.1,
+                          self.positive.height,
+                          self.positive.height * 0.2)
+        o = [
+            left(self.wall_thickness)(up(self.positive.usb_port["up"])(forward(self.positive.usb_port["forward"])(
+                hole()(cube([self.wall_thickness + self.positive.usb_port["length"],
+                             self.positive.usb_port_noose["width"],
+                             self.positive.usb_port["height"]]))))),
+            down(1.25)(right(10)(hole()(cube([self.positive.length - 15, self.positive.width, 1.25])))),
+            down(1.25)(
+                right(self.positive.length - 15)(forward(self.positive.width / 2 - 9.5)(hole()(cube([15, 20, 1.25]))))),
+            down(2.5)(forward(self.positive.width / 2 - 4.5)(right(self.positive.length)(hole()(
+                cube([1, 10, self.wall_thickness * 2 + self.positive.height]))))),
+        ]
+        base = c.add_cavities(base, self.positive)
+        return base + o
 
 
 if __name__ == '__main__':
-    scad_render_to_file(ESP8266().assemble(), join('./out/', NAME + ".scad"), file_header='$fn = 42;')
-    scad_render_to_file(ESP8266Case().bottom(), join('./out/', NAME + "_bottom.scad"), file_header='$fn = 42;')
-    scad_render_to_file(ESP8266Case().top(), join('./out/', NAME + "_top.scad"), file_header='$fn = 42;')
+    _ = ESP8266
+    scad_render_to_file(_().assemble(), join('./out/', _.name + ".scad"), file_header='$fn = 42;')
+    _ = ESP8266Case
+    scad_render_to_file(_().bottom(), join('./out/', _.name + "_bottom.scad"), file_header='$fn = 42;')
+    scad_render_to_file(_().top(), join('./out/', _.name + "_top.scad"), file_header='$fn = 42;')

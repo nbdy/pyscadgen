@@ -2,7 +2,6 @@ from os.path import join
 from solid.utils import *
 
 from Case import Case
-from Connector import ClipConnector
 from Pin import Pin
 
 SEGMENTS = 42
@@ -154,11 +153,10 @@ class ESP8266Case(Case):
     name = "esp8266case"
     positive = ESP8266
 
+    def __init__(self):
+        super(ESP8266Case, self).__init__(8)
+
     def finish(self, base):
-        c = ClipConnector(self.positive.length * 0.2,
-                          self.positive.width * 0.1,
-                          self.positive.height,
-                          self.positive.height * 0.2)
         o = [
             left(self.wall_thickness)(up(self.positive.usb_port["up"])(forward(self.positive.usb_port["forward"])(
                 hole()(cube([self.wall_thickness + self.positive.usb_port["length"],
@@ -169,14 +167,18 @@ class ESP8266Case(Case):
                 right(self.positive.length - 15)(forward(self.positive.width / 2 - 9.5)(hole()(cube([15, 20, 1.25]))))),
             down(2.5)(forward(self.positive.width / 2 - 4.5)(right(self.positive.length)(hole()(
                 cube([1, 10, self.wall_thickness * 2 + self.positive.height]))))),
+            forward(self.positive.usb_port["forward"])(left(self.positive.usb_port["left"] + 10)(
+                up(self.positive.usb_port["up"] - 2)(hole()(cube([self.positive.usb_port["length"] + 10,
+                                                                  self.positive.usb_port_noose["width"],
+                                                                  self.positive.usb_port_noose["height"]])))))
         ]
-        base = c.add_cavities(base, self.positive)
         return base + o
 
 
 if __name__ == '__main__':
     _ = ESP8266
     scad_render_to_file(_().assemble(), join('./out/', _.name + ".scad"), file_header='$fn = 42;')
-    _ = ESP8266Case
-    scad_render_to_file(_().bottom(), join('./out/', _.name + "_bottom.scad"), file_header='$fn = 42;')
-    scad_render_to_file(_().top(), join('./out/', _.name + "_top.scad"), file_header='$fn = 42;')
+    _ = ESP8266Case()
+    scad_render_to_file(_.bottom(), join('./out/', _.name + "_bottom.scad"), file_header='$fn = 42;')
+    scad_render_to_file(_.top(), join('./out/', _.name + "_top.scad"), file_header='$fn = 42;')
+    scad_render_to_file(_.connector.assemble(), join('./out/', _.name + "_connector.scad"), file_header='$fn = 42;')

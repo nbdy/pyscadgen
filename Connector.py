@@ -6,7 +6,7 @@ class Connector:
     connector_types = ["pin", "wall"]
     connector_head_types = {
         "pin": ["sphere"],
-        "wall": ["h", "t", "c", "z"]
+        "wall": ["dh", "t", "c", "z"]
     }
 
     # if pin length gets ignored
@@ -64,31 +64,25 @@ class Connector:
         return self.connector()
 
 
-class ClipConnector:
-    def __init__(self, length, width, height, depth):
+class ClipConnector(object):
+    def __init__(self, length, width, height, depth, connector_width, connector_height, stem_thickness):
         self.length = length
         self.width = width
         self.height = height
         self.depth = depth
+        self.connector_width = connector_width
+        self.stem_thickness = stem_thickness
+        self.connector_height = connector_height
 
     def assemble(self):
-        o = cube([self.length, self.width, self.height])
+        o = cube([self.length, self.stem_thickness, self.height])
         c = rotate([0, 90, 0])(cylinder(r=self.depth, h=self.length))
-        _h = cube([self.length, self.width * 3, self.height * 0.1])
+        _h = cube([self.length, self.connector_width, self.connector_height])
         return o + [
             _h,
             up(self.height)(_h),
-            up(self.depth)(forward(self.width * 3)(c)),
-            up(self.height)(forward(self.width * 3)(c))
-        ]
-
-    def add_cavities(self, obj, cls):
-        _rh = rotate([0, 0, 45])(hole()(cylinder(d=self.depth, h=self.length)))
-        return obj + [
-            forward(self.width)(right(cls.length * 0.2)(_rh)),
-            forward(cls.width - self.width)(right(cls.length * 0.2)(_rh)),
-            forward(self.width)(right(cls.length * 0.8)(_rh)),
-            forward(cls.width - self.width)(right(cls.length * 0.8)(_rh))
+            up(self.depth)(forward(self.connector_width)(c)),
+            up(self.height)(forward(self.connector_width)(c))
         ]
 
 
@@ -99,6 +93,7 @@ if __name__ == '__main__':
             scad_render_to_file(Connector(connector_type=t, connector_head_type=k).assemble(),
                                 join('./out/', "connector_" + t + "_" + k + ".scad"),
                                 file_header='$fn = 42;')
-    scad_render_to_file(ClipConnector(10, 3, 20, 2).assemble(),
+    print "rendering clip connector"
+    scad_render_to_file(ClipConnector(10, 3, 20, 2, 10, 2, 2).assemble(),
                         join('./out/', "clip_connector.scad"),
                         file_header='$fn = 42;')

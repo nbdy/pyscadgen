@@ -86,6 +86,35 @@ class ClipConnector(object):
         ]
 
 
+class RailConnector(object):
+    name = "RailConnector"
+
+    def __init__(self, rail_depth=5, rail_width=10, rail_neck=5, length=20):
+        self.rd = rail_depth
+        self.rw = rail_width
+        self.rn = rail_neck
+        self.l = length
+
+    def assemble(self):
+        b = cube([self.l, self.rn, self.rd * 2], center=True)
+        a = [cube([self.l, self.rw, self.rd], center=True),
+             up(self.rd * 2)(cube([self.l, self.rw, self.rd], center=True))]
+        return b + a
+
+
+class CableTieConnector(object):
+    name = "CableTieConnector"
+
+    def __init__(self, cable_tie_width=3, cable_tie_thickness=1):
+        self.ctw = cable_tie_width
+        self.ctt = cable_tie_thickness
+
+    def assemble(self):
+        b = cube([self.ctw * 2, self.ctw * 2, self.ctt * 3], center=True)
+        a = [up(self.ctt)(cube([self.ctw, self.ctw, self.ctt], center=True))]
+        return b + a
+
+
 if __name__ == '__main__':
     for t in Connector.connector_types:
         for k in Connector.connector_head_types[t]:
@@ -97,3 +126,7 @@ if __name__ == '__main__':
     scad_render_to_file(ClipConnector(10, 3, 20, 2, 10, 2, 2).assemble(),
                         join('./out/', "clip_connector.scad"),
                         file_header='$fn = 42;')
+    for c in [RailConnector, CableTieConnector]:
+        _ = c()
+        print "rendering", _.name
+        scad_render_to_file(_.assemble(), join('./out/', _.name + ".scad"), file_header='$fn = 42;')

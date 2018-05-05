@@ -25,7 +25,7 @@ class ESP8266:
     }
 
     usb_port_noose = {
-        "width": 7.85,
+        "width": 7.9,
         "height": 2.95,
         "down": (2.95 - usb_port["height"]) / 2,
         "back": (7.95 - usb_port["width"]) / 2
@@ -65,7 +65,7 @@ class ESP8266:
     }
 
     esp8266_chip = {
-        "length": 15.15,
+        "length": 15.25,
         "width": 12.10,
         "height": 4.65 - (height + esp8266_base_chip["height"]),
         "forward": (esp8266_base_chip["width"] - 12.05) / 2,
@@ -175,10 +175,35 @@ class ESP8266Case(Case):
         return base + o
 
 
+class ESP8266CaseN2:
+    name = "esp8266caseN2"
+
+    wall_thickness = 1
+    length = 57.45
+    width = 31.2
+
+    def __init__(self):
+        pass
+
+    def bottom(self):
+        lw = self.length + self.wall_thickness * 2
+        ww = self.width + self.wall_thickness * 2
+        a = []
+        b = cube([lw, ww, 5])
+
+    def top(self):
+        return
+
+
 if __name__ == '__main__':
+    """
     _ = ESP8266
     scad_render_to_file(_().assemble(), join('./out/', _.name + ".scad"), file_header='$fn = 42;')
     _ = ESP8266Case()
     scad_render_to_file(_.bottom(), join('./out/', _.name + "_bottom.scad"), file_header='$fn = 42;')
     scad_render_to_file(_.top(), join('./out/', _.name + "_top.scad"), file_header='$fn = 42;')
     scad_render_to_file(_.connector.assemble(), join('./out/', _.name + "_connector.scad"), file_header='$fn = 42;')
+    """
+    _ = ESP8266CaseN2()
+    scad_render_to_file(_.bottom(), join('./out/', _.name + "bottom.scad"), file_header='$fn = 42;')
+    scad_render_to_file(_.top(), join('./out/', _.name + "top.scad"), file_header='$fn = 42;')

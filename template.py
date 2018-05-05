@@ -1,13 +1,17 @@
 from os.path import join
-
 from solid.utils import *
 
-NAME = ""
 
+class Template:
+    name = "template"
 
-def assemble():
-    return
+    def __init__(self):
+        pass
+
+    def assemble(self):
+        return
 
 
 if __name__ == '__main__':
-    scad_render_to_file(assemble(), join('./out/', NAME + ".scad"), file_header='$fn = 42;')
+    _ = Template()
+    scad_render_to_file(_.assemble(), join('./out/', _.name + ".scad"), file_header='$fn = 42;')
